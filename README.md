@@ -20,7 +20,7 @@ e.add({
 })
 ```
 
-Objects have a number of option parameters.
+Objects have a number of optional parameters.
 ```javascript
 e.add({
 	tags: ["square"], // used for detecting collisions and removing objects
