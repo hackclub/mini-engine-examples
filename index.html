@@ -1,0 +1,437 @@
+<head>
+<script defer type="module">
+	import { render, html, svg } from 'https://unpkg.com/uhtml?module';
+	// import { render, html, svg } from "https://unpkg.com/lit-html@2.0.2/lit-html.js";
+	import { Engine } from "./Engine.js";
+
+	const examples = [
+	  {
+	  	title: "DRAW PLAYER",
+	    text: `const e = new Engine(canvas);
+const ctx = e.ctx;
+
+e.add({
+	tags: ["player"],
+	x: 150,
+	y: 150,
+	draw: (obj) => {
+		ctx.fillStyle = "blue";
+		ctx.fillRect(obj.x, obj.y, 20, 20)
+	},
+})
+
+e.start();
+	    `
+	  },
+	  {
+	  	title: "ADD GRAVITY",
+	    text: `const e = new Engine(canvas);
+const ctx = e.ctx;
+
+e.add({
+	tags: ["player"],
+	x: 150,
+	y: 50,
+	draw: (obj) => {
+		ctx.fillStyle = "blue";
+		ctx.fillRect(obj.x, obj.y, 20, 20)
+
+		obj.ay = 0.5;
+	},
+})
+
+e.start();
+	    `
+	  },
+	  {
+	  	title: "ADD FLOOR",
+	    text: `const e = new Engine(canvas);
+const ctx = e.ctx;
+
+e.add({
+	tags: ["player"],
+	solid: true,
+	x: 150,
+	y: 50,
+	draw: (obj) => {
+		ctx.fillStyle = "blue";
+		ctx.fillRect(obj.x, obj.y, 20, 20)
+
+		obj.ay = 0.5;
+	},
+})
+
+e.add({
+	tags: ["floor"],
+	solid: true,
+	x: 0,
+	y: 200,
+	draw: (obj) => {
+		ctx.fillStyle = "green";
+		ctx.fillRect(obj.x, obj.y, 2000, 20)
+	},
+})
+
+e.start();
+	    `
+	  },
+	  {
+	  	title: "ADD MOVEMENT",
+	    text: `const e = new Engine(canvas);
+const ctx = e.ctx;
+
+e.add({
+	tags: ["player"],
+	x: 150,
+	y: 150,
+	draw: (obj) => {
+		ctx.fillStyle = "blue";
+		ctx.fillRect(obj.x, obj.y, 20, 20)
+
+		if (e.heldKey("ArrowLeft")) obj.x -= 3;
+		if (e.heldKey("ArrowRight")) obj.x += 3;
+	},
+})
+
+e.start();
+	    `
+	  },
+	  {
+	  	title: "WIN CONDITION",
+	    text: `const e = new Engine(canvas);
+const ctx = e.ctx;
+
+e.add({
+	tags: ["player"],
+	x: 150,
+	y: 50,
+	draw: (obj) => {
+		ctx.fillStyle = "blue";
+		ctx.fillRect(obj.x, obj.y, 20, 20);
+
+		if (obj.collides("target")) {
+			e.end();
+			alert("You won!");
+		}
+
+		if (e.heldKey("ArrowLeft")) obj.x -= 3;
+		if (e.heldKey("ArrowRight")) obj.x += 3;
+	},
+})
+
+e.add({
+	tags: ["target"],
+	solid: true,
+	x: 50,
+	y: 50,
+	draw: (obj) => {
+		ctx.fillStyle = "orange";
+		ctx.fillRect(obj.x, obj.y, 20, 20)
+	},
+})
+
+e.start();
+	    `
+	  },
+	  {
+	  	title: "COLLECTION",
+	    text: `const e = new Engine(canvas);
+const ctx = e.ctx;
+
+e.add({
+	tags: ["player"],
+	x: 150,
+	y: 50,
+	draw: (obj) => {
+		ctx.fillStyle = "blue";
+		ctx.fillRect(obj.x, obj.y, 20, 20);
+
+		if (obj.collides("target")) {
+			e.remove("target");
+		}
+
+		if (e.heldKey("ArrowLeft")) obj.x -= 3;
+		if (e.heldKey("ArrowRight")) obj.x += 3;
+	},
+})
+
+e.add({
+	tags: ["target"],
+	solid: true,
+	x: 50,
+	y: 50,
+	draw: (obj) => {
+		ctx.fillStyle = "orange";
+		ctx.fillRect(obj.x, obj.y, 20, 20)
+	},
+})
+
+e.start();
+	    `
+	  },
+	  {
+	  	title: "JUMPING",
+	    text: `const e = new Engine(canvas);
+const ctx = e.ctx;
+
+e.add({
+	tags: ["player"],
+	solid: true,
+	x: 150,
+	y: 50,
+	draw: (obj) => {
+		ctx.fillStyle = "blue";
+		ctx.fillRect(obj.x, obj.y, 20, 20)
+
+		obj.ay = 0.5;
+
+		if (
+			e.pressedKey("ArrowUp") && 
+			obj.collides("floor", { bottom: 3 })
+			) {
+				obj.vy -= 5;
+		}
+	},
+})
+
+e.add({
+	tags: ["floor"],
+	solid: true,
+	x: 0,
+	y: 200,
+	draw: (obj) => {
+		ctx.fillStyle = "green";
+		ctx.fillRect(obj.x, obj.y, 2000, 20)
+	},
+})
+
+e.start();
+	    `
+	  },
+	  {
+	  	title: "PLATFORMS",
+	    text: `const e = new Engine(canvas);
+const ctx = e.ctx;
+
+e.add({
+	tags: ["player"],
+	solid: true,
+	x: 50,
+	y: 50,
+	draw: (obj) => {
+		ctx.fillStyle = "blue";
+		ctx.fillRect(obj.x, obj.y, 20, 20);
+
+		obj.ay = 0.4;
+
+		e.get("platform").forEach(x => {
+			if (obj.collides(x, { bottom: 3 })) obj.vx = x.vx;
+		})
+
+		if (e.heldKey("ArrowLeft")) obj.x -= 3;
+		if (e.heldKey("ArrowRight")) obj.x += 3;
+	},
+})
+
+const addPlatform = (x, y) => e.add({
+	tags: ["platform"],
+	solid: true,
+	x: x,
+	y: y,
+	vx: -1,
+	draw: (obj) => {
+		ctx.fillStyle = "green";
+		ctx.fillRect(obj.x, obj.y, 100, 20)
+
+		if (obj.x < 0) obj.vx = 1;
+		if (obj.x + obj.width > e.width) obj.vx = -1
+	},
+})
+
+addPlatform(50, 200);
+addPlatform(20, 100);
+
+e.start();
+	    `
+	  },
+	]
+
+	const STATE = {
+		examples,
+		searchTerm: "",
+	}
+
+
+
+	const view = (state) => html`	
+		<div class="search-box">
+			<input @input=${x => { state.searchTerm = x.target.value; r(); }}></input>
+		</div>
+		<div class="examples">${drawExamples(state)}</div>
+		<img 
+			style="display:none;" 
+			src="https://cdn.download.ams.birds.cornell.edu/api/v1/asset/308404861/1800"
+			/>
+	`
+
+	const drawExamples = state => state.examples.filter(x => {
+		const text = `${x.title} ${x.text}`.toLowerCase();
+		return state.searchTerm === "" || text.includes(state.searchTerm.toLowerCase());
+	}).map((x, i) => {
+		const draw = (e) => {
+			const code = x.text;
+			const canvas = e.target.previousElementSibling.querySelector("canvas");
+			const { width, height } = e.target.previousElementSibling.getBoundingClientRect();
+			canvas.width = width;
+			canvas.height = height;
+			(new Function("canvas", "Engine", `
+				${code}
+			`))(canvas, Engine);
+		}
+
+		return html.for(x)`
+			<div class="example">
+				<div class="example-title">${x.title}</div>
+				<pre class="example-code"><code class="language-js">${x.text}</code></pre>
+				<div class="example-view">
+					<canvas width="1" height="1"></canvas>
+				</div>
+				<button class="draw-trigger" @click=${draw}>run</button>
+			</div>
+		`})
+
+	// const r = () => render(view(STATE), document.body);
+	const r = () => render(document.body, view(STATE));
+
+	function adjustCanvases() {
+		const views = document.querySelectorAll(".example-view");
+		for (let i = 0; i < views.length; i++) {
+			const c = views[i].nextElementSibling;
+			c.click();
+		}
+	}	
+
+	r();
+	adjustCanvases();
+</script>
+
+<style>
+	body {
+		margin: 0px;
+		width: 100vw;
+		display: flex;
+		align-items: top;
+    justify-content: center;
+    flex-direction: column;
+    overflow-x: hidden;
+	}
+
+	.search-box {
+		margin-top: 30px;
+		width: 100%;
+		display: flex;
+		place-content: center;
+	}
+
+	.search-box input {
+		width: 60%;
+		padding: 10px;
+	}
+
+	.examples {
+		padding: 20px;
+		display: grid;
+		place-content: center;
+		justify-items: center;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.example {
+		display: grid;
+		grid-template: 
+			"example-title example-title" 30px
+			"example-code example-view" 1fr
+			/ 1fr 300px;
+		justify-items: center;
+		align-items: center;
+		border: 2px solid grey;
+		border-radius: 15px;
+		padding: 20px;
+		margin-bottom: 20px;
+		background: #ffe4c445;
+		width: 90%;
+
+/*		max-width: 800px;
+		min-width: 300px;*/
+	}
+
+	.example-title {
+		grid-area: example-title;
+		width: 100%;
+		font-size: 1.2em;
+	}
+
+	.example-code {
+		grid-area: example-code;
+		height: 100%;
+		width: 100%;
+		overflow-x: scroll;
+		background: darkgray;
+		padding: 10px;
+		border-radius: 15px;
+		box-sizing: border-box;
+	}
+
+	.example-view {
+		grid-area: example-view;
+		width: 300px;
+		height: 300px;
+		margin-left: 20px;
+		/*border: solid 1px black;*/
+		border-radius: 15px;
+		box-sizing: border-box;
+	}
+
+	.example-view canvas {
+		border-radius: 15px;
+	}
+
+	.draw-trigger {
+		border-radius: 5px;
+		padding: 5px;
+		margin: 5px;
+		border: 1px solid grey;
+		/*display: none;*/
+	}
+
+	.draw-trigger:hover {
+		border-radius: 5px;
+		padding: 5px;
+		margin: 5px;
+		border: 1px solid blue;
+		/*display: none;*/
+	}
+	
+</style>
+<link href="prism.css" rel="stylesheet" />
+<script defer src="prism.js"></script>
+
+</head>
+
+<body></body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
