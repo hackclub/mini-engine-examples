@@ -1,3 +1,3 @@
-# A Construction Kit for Vanilla JS Canvas
+# A Tiny Game Engine for Tiny Games
 
-Here is a set of minimal examples for various drawing techniques in a JavaScript canvas. Compose them for magic.
+Here is a set of minimal examples using a tiny game engine for JavaScript canvas. Compose them for magic.
