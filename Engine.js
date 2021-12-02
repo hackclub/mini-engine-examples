@@ -130,7 +130,6 @@ class Object {
 		this.solid = params.solid ?? false;
 		this.click = params.click ?? null;
 		this.draw = params.draw ?? null;
-		this.contacted = false;
 		this.dx = 0;
 		this.dy = 0;
 
@@ -216,8 +215,8 @@ class Engine {
 		this.ctx = canvas.getContext("2d");
 		this.objects = [];
 		this.drawing = false;
-		this.step = 0;
-
+		this.step = 0; 
+		
 		const { width, height } = canvas.getBoundingClientRect();
 		this._width = width;
 		this._height = height; 
@@ -262,8 +261,8 @@ class Engine {
 
 	get width() { return this._width };
 	get height() { return this._height };
-	get mouseX() { return this._mouseX };
-	get mouseY() { return this._mouseY };
+	get mouseX() { return this._mouseX }; // not doced
+	get mouseY() { return this._mouseY }; // not doced
 
 	add(params) {
 		const newObj = new Object(params, this)
@@ -272,7 +271,7 @@ class Engine {
 		return newObj;
 	}
 
-	get(tag) {
+	get(tag) { // not doced
 		return this.objects.filter(x => x.tags.includes(tag));
 	}
 
@@ -281,7 +280,7 @@ class Engine {
 		else if (typeof query === "string") this.objects = this.objects.filter(x => !x.tags.includes(query));
 	}
 
-	onDraw(f) {
+	onDraw(f) { // not doced
 		this._onDraw.push(f);
 	}
 
