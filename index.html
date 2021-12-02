@@ -267,11 +267,14 @@ e.start();
 		<div class="search-box">
 			<input @input=${x => { state.searchTerm = x.target.value; r(); }}></input>
 		</div>
+		<div class="text">
+			A minimal template a can be found in the&nbsp;<a href="https://hackclub.github.io/live-editor/">live editor</a>&nbsp;under "Examples" -> "Game Template".
+		</div>
+		<div class="text">
+			A more full example game can be found under "Examples" -> "Full Game Example" or&nbsp;
+			<a href="https://hackclub.github.io/live-editor/?file=reciJK4MkJL17lAEb">here</a>.
+		</div>
 		<div class="examples">${drawExamples(state)}</div>
-		<img 
-			style="display:none;" 
-			src="https://cdn.download.ams.birds.cornell.edu/api/v1/asset/308404861/1800"
-			/>
 	`
 
 	const drawExamples = state => state.examples.filter(x => {
@@ -330,6 +333,13 @@ e.start();
 		margin-top: 30px;
 		width: 100%;
 		display: flex;
+		place-content: center;
+	}
+
+	.text {
+		width: 100%;
+		display: flex;
+		margin-top: 10px;
 		place-content: center;
 	}
 
